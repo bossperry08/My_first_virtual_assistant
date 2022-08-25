@@ -1,21 +1,31 @@
-import pyttsx3
+import pygame
+from gtts import gTTS
+from chatterbot import ChatBot
+import logging, os
+import speech_recognition as sr 
 
-#Basic virtual assistant
-engine = pyttsx3.init()
-engine.say("Hello, my name is Apollo Patrick." + " What's your name, mate?")
-engine.runAndWait()
-name = input()
-engine.say("Hello " + name + ", how old are you, mate?")
-engine.runAndWait()
-age = input()
-engine.say("Well, so you are " + age + " years old. " + "How are you today, mate?")
-engine.runAndWait()
-status = input()
-engine.say("Oh, you are rather " + status + " today, mate.")
-engine.runAndWait()
+logging.basicConfig(level=logging.CRITICAL)
 
+bot = ChatBot(
+        'Mario',
+        storage_adapter='chatterbot.storage.SQLStorageAdapter'
+)
 
-
-
-
-
+os.system("cls")
+while True:
+    try:
+        r = sr.Recognizer()
+        audio_data = r.record(sr.Microphone(), duration=5)
+        text = r.recognize_google(audio_data, language="en")
+        user_input = text
+        bot_response = bot.get_response(user_input)
+        myobj = gTTS(text=bot_response, lang="en", slow=False)
+        myobj.save("bot.mp3")
+        pygame.mixer.init()
+        pygame.mixer.music.load("bot.mp3")
+        pygame.mixer.music.play()
+        while pygame.mixer.music.get_busy() == True:
+            continue
+         
+    except (KeyboardInterrupt, EOFError, SystemExit):
+        break

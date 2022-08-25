@@ -1,0 +1,5 @@
+gtts
+pygame
+SpeechRecognition
+pyaudio 
+ChatterBot==1.0.2
