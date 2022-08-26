@@ -1,21 +1,30 @@
 import pyttsx3
+from chatterbot import ChatBot
+import logging, os
+import speech_recognition as sr 
 
-#Basic virtual assistant
+logging.basicConfig(level=logging.CRITICAL)
+
+bot = ChatBot(
+        'Mario',
+        storage_adapter='chatterbot.storage.SQLStorageAdapter'
+)
+
+os.system("cls")
+r = sr.Recognizer()
 engine = pyttsx3.init()
-engine.say("Hello, my name is Apollo Patrick." + " What's your name, mate?")
-engine.runAndWait()
-name = input()
-engine.say("Hello " + name + ", how old are you, mate?")
-engine.runAndWait()
-age = input()
-engine.say("Well, so you are " + age + " years old. " + "How are you today, mate?")
-engine.runAndWait()
-status = input()
-engine.say("Oh, you are rather " + status + " today, mate.")
-engine.runAndWait()
+engine.setProperty("rate", 150)
 
-
-
-
-
-
+while True:
+    try:
+        with sr.Microphone() as source:
+            audio_data = r.record(source, duration=5)
+            text = r.recognize_google(audio_data)
+        user_input = text
+        bot_response = bot.get_response(user_input)
+        text = bot_response
+        engine.say(text)
+        engine.runAndWait()
+         
+    except (KeyboardInterrupt, EOFError, SystemExit):
+        break
