@@ -1,5 +1,4 @@
-import pygame
-from gtts import gTTS
+import pyttsx3
 from chatterbot import ChatBot
 import logging, os
 import speech_recognition as sr 
@@ -12,20 +11,20 @@ bot = ChatBot(
 )
 
 os.system("cls")
+r = sr.Recognizer()
+engine = pyttsx3.init()
+engine.setProperty("rate", 150)
+
 while True:
     try:
-        r = sr.Recognizer()
-        audio_data = r.record(sr.Microphone(), duration=5)
-        text = r.recognize_google(audio_data, language="en")
+        with sr.Microphone() as source:
+            audio_data = r.record(source, duration=5)
+            text = r.recognize_google(audio_data)
         user_input = text
         bot_response = bot.get_response(user_input)
-        myobj = gTTS(text=bot_response, lang="en", slow=False)
-        myobj.save("bot.mp3")
-        pygame.mixer.init()
-        pygame.mixer.music.load("bot.mp3")
-        pygame.mixer.music.play()
-        while pygame.mixer.music.get_busy() == True:
-            continue
+        text = bot_response
+        engine.say(text)
+        engine.runAndWait()
          
     except (KeyboardInterrupt, EOFError, SystemExit):
         break

@@ -1,5 +1,4 @@
-gtts
-pygame
+pyttsx3
 SpeechRecognition
 pyaudio 
 ChatterBot==1.0.2
